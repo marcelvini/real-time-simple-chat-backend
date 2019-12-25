@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+
+<body>
+    <div style="justify-content: left;border-width: 0.2ch;border-style: solid;width:300px;height:300px">
+        <header>
+            <div id="status" style="background-color:red;width:10px;height:10px"></div>
+        </header>
+        <section style="width:300px;height:275px;min-height: 100; min-width: 100;">
+            <ul
+                style="margin: 0; padding: 0;text-align: left; white-space:normal;word-wrap:break-word;list-style-type: none;">
+
+            </ul>
+        </section>
+        <footer>
+            <textarea id="ta" name="textarea" style="width:295px;height:30px;min-height: 100; min-width: 100;"
+                placeholder="Digite o texto aqui"></textarea>
+        </footer>
+    </div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js"></script>
+<script src="https://unpkg.com/@adonisjs/websocket-client"></script>
+<script>
+    let ws = adonis.Ws('ws://localhost:3333').connect()
+    const status = document.querySelector('div#status')
+    ws.on('open', () => {
+        status.style.backgroundColor = 'green'
+    })
+    ws.on('error', () => {
+        status.style.backgroundColor = 'red'
+    })
+    ws.on('close', () => {
+        status.style.backgroundColor = 'red'
+    })
+    const chat = ws.subscribe("chat")
+    const textarea = document.querySelector('textarea#ta')
+    const messagebox = document.querySelector('ul')
+    const section = document.querySelector('section')
+    textarea.addEventListener('keypress', (e) => {
+        if (e.code === "Enter") {
+            e.preventDefault()
+            chat.emit("message", { text: textarea.value })
+            textarea.value = ""
+        }
+    })
+    chat.on("message", (data) => {
+        const li = document.createElement('li')
+        li.innerHTML = ` ${data.id}:${data.text}`
+        messagebox.appendChild(li)
+        section.scrollTop = section.ScrollHeight
+    })
+</script>
+
+</html>

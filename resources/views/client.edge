@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+    </head>
+    <body>
+        <div background-color = '000000'></div>
+    </body>
+    <script src="https://unpkg.com/@adonisjs/websocket-client"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js"></script>
+    <script>
+    let ws = adonis.Ws('ws://localhost:3333').connect()
+    ws.on('open', () =>{
+
+    })
+    ws.on('error', () =>{
+        
+    })
+    ws.on('close', () =>{
+        
+    })
+    </script>
+</html>
