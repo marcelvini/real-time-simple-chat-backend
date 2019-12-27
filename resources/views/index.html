@@ -27,7 +27,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js"></script>
 <script src="https://unpkg.com/@adonisjs/websocket-client"></script>
 <script>
-    let ws = adonis.Ws('ws://localhost:3333').connect()
+    //let ws = adonis.Ws('ws://adonischat.herokuapp.com').connect()
+    let xhr = new XMLHttpRequest();
+    var params = {
+        "email": "marcel@email.com",
+        "password": "123"
+    }
+    let token
+    xhr.open('POST', 'http://localhost:3333/login', false)
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(params));
+    console.log(JSON.parse(xhr.responseText))
+    token = JSON.parse(xhr.responseText).token
+
+    let ws = adonis.Ws('ws://localhost:3333').withJwtToken(token).connect()
     const status = document.querySelector('div#status')
     ws.on('open', () => {
         status.style.backgroundColor = 'green'
@@ -49,9 +62,9 @@
             textarea.value = ""
         }
     })
-    chat.on("message", (data) => {
+    chat.on("message", (data, request) => {
         const li = document.createElement('li')
-        li.innerHTML = ` ${data.id}:${data.text}`
+        li.innerHTML = ` ${data.user.username}:${data.text}`
         messagebox.appendChild(li)
         section.scrollTop = section.ScrollHeight
     })
